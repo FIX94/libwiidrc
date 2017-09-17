@@ -98,6 +98,10 @@ bool WiiDRC_ScanPads()
 	return true;
 }
 
+const u8 *WiiDRC_GetRawI2CAddr()
+{
+	return __WiiDRC_I2CBuf;
+}
 const struct WiiDRCData *WiiDRC_Data()
 {
 	return &__WiiDRC_PadData;
