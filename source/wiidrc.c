@@ -16,6 +16,7 @@ static struct WiiDRCButtons __WiiDRC_PadButtons;
 
 static u32 __WiiDRC_Inited = 0;
 static u8 *__WiiDRC_I2CBuf = NULL;
+static u8 *__WiiDRC_DRCStateBuf = NULL;
 
 static bool __WiiDRC_SetI2CBuf()
 {
@@ -39,12 +40,32 @@ static bool __WiiDRC_SetI2CBuf()
 	return false;
 }
 
+static bool __WiiDRC_SetDRCStateBuf()
+{
+	//TODO r569
+	DCInvalidateRange((void*)0x938B563C, 4);
+	if(*(vu32*)0x938B563C == 0x138BE770) //r570
+	{
+		__WiiDRC_DRCStateBuf = (u8*)0x938BE770;
+		return true;
+	}
+	DCInvalidateRange((void*)0x938B5724, 4);
+	if(*(vu32*)0x938B5724 == 0x138BD770) //r590
+	{
+		__WiiDRC_DRCStateBuf = (u8*)0x938BD770;
+		return true;
+	}
+	return false;
+}
+
 bool WiiDRC_Init()
 {
 	if(__WiiDRC_Inited == 1)
 		return false;
 	if(!__WiiDRC_SetI2CBuf())
 		return false;
+	//can fail on r569 for now
+	__WiiDRC_SetDRCStateBuf();
 
 	__WiiDRC_Inited = 1;
 
@@ -96,6 +117,16 @@ bool WiiDRC_ScanPads()
 	__WiiDRC_PadButtons.down = newstate & (newstate ^ oldstate);
 
 	return true;
+}
+
+bool WiiDRC_Connected()
+{
+	if(__WiiDRC_DRCStateBuf)
+	{
+		DCInvalidateRange(__WiiDRC_DRCStateBuf, 4);
+		return !!(*(vu32*)__WiiDRC_DRCStateBuf);
+	}
+	return true; //default connect
 }
 
 const u8 *WiiDRC_GetRawI2CAddr()
