@@ -32,34 +32,48 @@ int main(int argc, char *argv[])
 	PAD_Init();
 	WPAD_Init();
 	WiiDRC_Init();
+	bool inited = WiiDRC_Inited();
+	bool connected = false;
+	if(inited) //Wii VC can start with gamepad off
+		connected = WiiDRC_Connected();
 	while(1)
 	{
 		printf("\x1b[2J");
 		printf("\x1b[37m");
-		printf("WiiDRC v1.0 Demo by FIX94\n");
+		printf("WiiDRC v1.1 Demo by FIX94\n");
 		printf("Press any button on a real Wiimote to exit\n");
-		WiiDRC_ScanPads();
-		const struct WiiDRCData *drcdat = WiiDRC_Data();
-		printf("Left Stick X: %i, Y: %i; Right Stick X: %i, Y: %i\n", 
-			drcdat->xAxisL, drcdat->yAxisL, drcdat->xAxisR, drcdat->yAxisR);
-		if(drcdat->button & WIIDRC_BUTTON_A) printf("A pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_B) printf("B pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_X) printf("X pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_Y) printf("Y pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_LEFT) printf("D-Pad Left pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_RIGHT) printf("D-Pad Right pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_UP) printf("D-Pad Up pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_DOWN) printf("D-Pad Down pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_ZL) printf("ZL pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_ZR) printf("ZR pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_L) printf("L pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_R) printf("R pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_PLUS) printf("Plus pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_MINUS) printf("Minus pressed\n");
-		if(drcdat->button & WIIDRC_BUTTON_HOME) printf("HOME pressed\n");
-		if(drcdat->extra & WIIDRC_EXTRA_BUTTON_L3) printf("L3 pressed\n");
-		if(drcdat->extra & WIIDRC_EXTRA_BUTTON_R3) printf("R3 pressed\n");
-		if(drcdat->extra & WIIDRC_EXTRA_BUTTON_TV) printf("TV pressed\n");
+		if(inited)
+		{
+			if(connected)
+			{
+				WiiDRC_ScanPads();
+				const struct WiiDRCData *drcdat = WiiDRC_Data();
+				printf("Left Stick X: %i, Y: %i; Right Stick X: %i, Y: %i\n", 
+					drcdat->xAxisL, drcdat->yAxisL, drcdat->xAxisR, drcdat->yAxisR);
+				if(drcdat->button & WIIDRC_BUTTON_A) printf("A pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_B) printf("B pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_X) printf("X pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_Y) printf("Y pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_LEFT) printf("D-Pad Left pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_RIGHT) printf("D-Pad Right pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_UP) printf("D-Pad Up pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_DOWN) printf("D-Pad Down pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_ZL) printf("ZL pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_ZR) printf("ZR pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_L) printf("L pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_R) printf("R pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_PLUS) printf("Plus pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_MINUS) printf("Minus pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_HOME) printf("HOME pressed\n");
+				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_L3) printf("L3 pressed\n");
+				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_R3) printf("R3 pressed\n");
+				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_TV) printf("TV pressed\n");
+			}
+			else
+				printf("Gamepad was not enabled when starting Wii VC.\n"); 
+		}
+		else
+			printf("Not started in Wii VC or used fw.img was not patched for homebrew use.\n");
 		VIDEO_WaitVSync();
 		VIDEO_WaitVSync();
 		PAD_ScanPads();
