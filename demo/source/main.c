@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
 				if(drcdat->button & WIIDRC_BUTTON_PLUS) printf("Plus pressed\n");
 				if(drcdat->button & WIIDRC_BUTTON_MINUS) printf("Minus pressed\n");
 				if(drcdat->button & WIIDRC_BUTTON_HOME) printf("HOME pressed\n");
+				if(drcdat->button & WIIDRC_BUTTON_SYNC) printf("SYNC pressed\n");
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_L3) printf("L3 pressed\n");
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_R3) printf("R3 pressed\n");
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_TV) printf("TV pressed\n");
