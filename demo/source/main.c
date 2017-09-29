@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	{
 		printf("\x1b[2J");
 		printf("\x1b[37m");
-		printf("WiiDRC v1.2 Demo by FIX94\n");
+		printf("WiiDRC v1.3 Demo by FIX94\n");
 		printf("Press any button on a real Wiimote to exit\n");
 		if(inited)
 		{
