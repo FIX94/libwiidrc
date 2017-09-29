@@ -13,6 +13,7 @@
 static struct WiiDRCStat __WiiDRC_Status;
 static struct WiiDRCData __WiiDRC_PadData;
 static struct WiiDRCButtons __WiiDRC_PadButtons;
+static bool __WiiDRC_ShutdownRequested;
 
 static u32 __WiiDRC_Inited = 0;
 static u8 *__WiiDRC_I2CBuf = NULL;
@@ -72,6 +73,7 @@ bool WiiDRC_Init()
 	WiiDRC_Recalibrate(); //sets up __WiiDRC_Status
 	memset(&__WiiDRC_PadData,0,sizeof(struct WiiDRCData));
 	memset(&__WiiDRC_PadButtons,0,sizeof(struct WiiDRCButtons));
+	__WiiDRC_ShutdownRequested = false;
 
 	return true;
 }
@@ -101,12 +103,14 @@ bool WiiDRC_ScanPads()
 		return false;
 
 	DCInvalidateRange(__WiiDRC_I2CBuf,9);
+	__WiiDRC_ShutdownRequested = !!(__WiiDRC_I2CBuf[1]&0x80);
 	__WiiDRC_PadData.button = (__WiiDRC_I2CBuf[2]<<8) | (__WiiDRC_I2CBuf[3]);
 	__WiiDRC_PadData.xAxisL = ((s8)(__WiiDRC_I2CBuf[4]-0x80)) - __WiiDRC_Status.xAxisLmid;
 	__WiiDRC_PadData.yAxisL = ((s8)(__WiiDRC_I2CBuf[5]-0x80)) - __WiiDRC_Status.yAxisLmid;
 	__WiiDRC_PadData.xAxisR = ((s8)(__WiiDRC_I2CBuf[6]-0x80)) - __WiiDRC_Status.xAxisRmid;
 	__WiiDRC_PadData.yAxisR = ((s8)(__WiiDRC_I2CBuf[7]-0x80)) - __WiiDRC_Status.yAxisRmid;
 	__WiiDRC_PadData.extra = __WiiDRC_I2CBuf[8];
+	__WiiDRC_PadData.battery = (__WiiDRC_PadData.extra>>1)&7;
 
 	u16 newstate, oldstate;
 
@@ -127,6 +131,11 @@ bool WiiDRC_Connected()
 		return !!(*(vu32*)__WiiDRC_DRCStateBuf);
 	}
 	return true; //default connect
+}
+
+bool WiiDRC_ShutdownRequested()
+{
+	return __WiiDRC_ShutdownRequested;
 }
 
 const u8 *WiiDRC_GetRawI2CAddr()

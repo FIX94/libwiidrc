@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	{
 		printf("\x1b[2J");
 		printf("\x1b[37m");
-		printf("WiiDRC v1.1 Demo by FIX94\n");
+		printf("WiiDRC v1.2 Demo by FIX94\n");
 		printf("Press any button on a real Wiimote to exit\n");
 		if(inited)
 		{
@@ -50,6 +50,9 @@ int main(int argc, char *argv[])
 				const struct WiiDRCData *drcdat = WiiDRC_Data();
 				printf("Left Stick X: %i, Y: %i; Right Stick X: %i, Y: %i\n", 
 					drcdat->xAxisL, drcdat->yAxisL, drcdat->xAxisR, drcdat->yAxisR);
+				if(drcdat->battery) printf("Battery: %i\n", drcdat->battery);
+				else printf("Battery: Charging\n");
+				if(WiiDRC_ShutdownRequested()) printf("Gamepad is asking for a shutdown\n");
 				if(drcdat->button & WIIDRC_BUTTON_A) printf("A pressed\n");
 				if(drcdat->button & WIIDRC_BUTTON_B) printf("B pressed\n");
 				if(drcdat->button & WIIDRC_BUTTON_X) printf("X pressed\n");
@@ -69,6 +72,8 @@ int main(int argc, char *argv[])
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_L3) printf("L3 pressed\n");
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_R3) printf("R3 pressed\n");
 				if(drcdat->extra & WIIDRC_EXTRA_BUTTON_TV) printf("TV pressed\n");
+				if(drcdat->extra & WIIDRC_EXTRA_OVERLAY_TV) printf("TV overlay\n");
+				if(drcdat->extra & WIIDRC_EXTRA_OVERLAY_POWER) printf("Shutdown overlay\n");
 			}
 			else
 				printf("Gamepad was not enabled when starting Wii VC.\n"); 
